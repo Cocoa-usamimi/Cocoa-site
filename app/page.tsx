@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getLatestDevlogPost } from "@/lib/devlog";
+import { getAllDevlogPosts, getLatestDevlogPost } from "@/lib/devlog";
+import { highlights, INSTAGRAM_URL } from "@/content/highlights";
 
 const rooms = [
   {
@@ -21,6 +22,7 @@ const rooms = [
 
 export default function HomePage() {
   const latest = getLatestDevlogPost();
+  const devlogCount = getAllDevlogPosts().length;
 
   return (
     <>
@@ -65,9 +67,60 @@ export default function HomePage() {
         ))}
       </div>
 
+      <h2 className="section-title">おすすめの抜粋</h2>
+      <div className="highlights">
+        {highlights.map((item) => (
+          <article key={item.id} className="highlight-card">
+            <span className="source">{item.source}</span>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+            {item.spots && (
+              <ul className="highlight-list">
+                {item.spots.map((spot) => (
+                  <li key={spot.name}>
+                    <strong>{spot.name}</strong>
+                    <span>{spot.note}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {item.news && (
+              <ul className="highlight-list">
+                {item.news.map((news) => (
+                  <li key={`${news.shop}-${news.title}`}>
+                    <strong>
+                      {news.shop}「{news.title}」
+                    </strong>
+                    <span>{news.date}の便りから</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="highlight-note">
+              {item.note}{" "}
+              <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
+                Instagram @cocoa_usamimi
+              </a>
+            </p>
+          </article>
+        ))}
+
+        <article className="highlight-card">
+          <span className="source">このサイト ― 開発ログ</span>
+          <h3>開発ログ</h3>
+          <p>
+            このサイトをどう作り、どう決めてきたか、判断の記録として開発ログを残しています。現在{devlogCount}
+            件のログがあります。
+          </p>
+          <p className="highlight-note">
+            <Link href="/devlog">開発ログを読む →</Link>
+          </p>
+        </article>
+      </div>
+
       {latest && (
         <>
-          <h2 className="section-title">開発ログ</h2>
+          <h2 className="section-title">最新の開発ログ</h2>
           <div className="devlog-latest">
             <span className="date">{latest.date}</span>
             <h3>
